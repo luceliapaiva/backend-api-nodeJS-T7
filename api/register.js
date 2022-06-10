@@ -1,5 +1,5 @@
-const { find } = require('lodash')
-const beautifyUnique = require('mongoose-beautiful-unique-validation')
+const { model } = require('mongoose')
+const beautifulUnique = require('mongoose-beautiful-unique-validation')
 const restful = require('node-restful')
 const mongoose = restful.mongoose
 
@@ -12,6 +12,6 @@ const registerSchema = new mongoose.Schema({
    complement: { type: String, required: false }
 })
 
-registerSchema.plugin(beautifyUnique)
+registerSchema.plugin(beautifulUnique)
 
 module.exports = restful.model('Register', registerSchema )

@@ -1,4 +1,4 @@
-const { model } = require('mongoose')
+const { find } = require('lodash')
 const beautifulUnique = require('mongoose-beautiful-unique-validation')
 const restful = require('node-restful')
 const mongoose = restful.mongoose

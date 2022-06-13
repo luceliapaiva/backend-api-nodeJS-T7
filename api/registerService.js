@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Register = require('./register')
-const fullNameRegex = (/^[A-ZÀ-Ÿ][A-zÀ-ÿ']+\s([A-zÀ-ÿ']\s?)*[A-ZÀ-Ÿ][A-zÀ-ÿ']+$/) + ' '
-const mailRegex = /\S+@S+\.\S+/;
+const fullNameRegex = /^[A-ZÀ-Ÿ][A-zÀ-ÿ']+\s([A-zÀ-ÿ']\s?)*[A-ZÀ-Ÿ][A-zÀ-ÿ']+$/
+const mailRegex = /\S+@\S+\.\S+/
 
 Register.methods(['get', 'post', 'put', 'delete'])
 Register.updateOptions({ new: true, runValidators: true })
@@ -9,10 +9,10 @@ Register.updateOptions({ new: true, runValidators: true })
 Register.after('post', sendErrorsOrNext).after('put', sendErrorsOrNext)
 Register.before('post', register).before('put', register)
 
-function sendErrorsOrNext(req, res, next) {
-  const bundle = res.locals.bundle
+function sendErrorsOrNext(req, res, next){
+  const bundle = req.locals.bundle
   
-  if (bundle.errors) {
+  if (bundle.errors){
     var errors = parseErrors(bundle.errors)
     res.status(500).json({ errors })
   } else {
@@ -20,7 +20,7 @@ function sendErrorsOrNext(req, res, next) {
   }
 }
 
-function parseErrors(nodeRestfulErrors) {
+function parseErrors(nodeRestfulErrors){
   const errors = []
   _.forIn(nodeRestfulErrors, error => errors.push(error.message))
   return errors
@@ -32,7 +32,7 @@ const sendErrorsFromDB = (res, dbErrors) => {
   return res.status(400).json({ errors })
 }
 
-function register(req, res, next) {
+function register(req, res, next){
   const fullName = req.body.fullName || ''
   const mail = req.body.mail || ''
   const phone = req.body.phone || ''
@@ -41,19 +41,19 @@ function register(req, res, next) {
   const complement = req.body.complement || ''
 
   if(fullName == null || fullName == ""){
-    return res.status(400).send({ alert: ["O campo Nome Completo é obrigatório"] })
+    return res.status(400).send({ alert: ["O campo Nome Completo é obrigatório"]})
   }
 
   if(!fullName.match(fullNameRegex)){
-    return res.status(400).send({ alert: ["Informe o nome e o sobrenome"] })
+    return res.status(400).send({ alert: ["Informe o nome e o sobrenome"]})
   }
 
-  if(!mail.match(mailRegex)){
-    return res.status(400).send({ alert: ["O campo E-mail é obrigatório"] })
+  if(mail == null || mail == ""){
+    return res.status(400).send({ alert: ["O campo E-mail é obrigatório"]})
   }  
 
   if(!mail.match(mailRegex)){
-    return res.status(400).send({ alert: ["O e-mail informado é inválido. Informe um e-mail no formato [nome@dominio.com.br]"] })
+    return res.status(400).send({ alert: ["O e-mail informado é inválido. Informe um e-mail no formato [nome@dominio.com ou nome@dominio.com.br]."] })
   } 
 
 const newBody = new Register({
@@ -66,7 +66,7 @@ const newBody = new Register({
   })
 
   newBody.save(err => {
-      if (err) {
+      if (err){
           return sendErrorsFromDB(res, err)
       } else {
           res.status(201).json(newBody)
